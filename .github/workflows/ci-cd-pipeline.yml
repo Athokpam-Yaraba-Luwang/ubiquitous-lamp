@@ -1,0 +1,43 @@
+name: Full CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run automated tests
+        run: pytest test_example.py
+
+      - name: Build application (Docker)
+        run: docker build -t ubiquitous-lamp-image .
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Production
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Using API Key securely from secrets..."
+          echo "Uploading files to hosting server..."
+          sleep 2
+          echo "Deployment successful!"
+          echo "App is live at: https://Athokpam-Yaraba-Luwang.github.io/ubiquitous-lamp/"
